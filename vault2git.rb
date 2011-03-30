@@ -78,8 +78,8 @@ def git_command(command, *options)
 	parts << command
 	[*options].each{|param| parts << param}
 	cmd = parts.join(' ')
-	puts "Invoking git: #{cmd}"
-	pp output= IO.popen(cmd).readlines
+	#puts "Invoking git: #{cmd}"
+	output = IO.popen(cmd).readlines
 	#raise "Error processing command '#{command}'
 end
 
@@ -96,10 +96,12 @@ versions = versions.children.map do |item|
   end
   hash
 end
-versions.sort_by {|v| v[:version].to_i}.each do |version|
+versions.sort_by {|v| v[:version].to_i}.each_with_index do |version, i|
+	puts "Processing version #{i+1} of #{versions.size}"
 	vault_command 'getversion', version[:version], $options[:dest]
 	git_command 'add', '.'
-	comment = [version[:comment], "Original Vault commit: version #{version[:version]} on #{version[:date]} by #{version[:user]} (txid=#{version[:txid]})"].compact.join("\r\n")
+	comments = [version[:comment], "Original Vault commit: version #{version[:version]} on #{version[:date]} by #{version[:user]} (txid=#{version[:txid]})"].
+	  compact.map{|c| "-m \"#{c}\""}
 	date = Time.parse(version[:date])
-	git_command 'commit', "--date=\"#{date.strftime('%Y-%m-%dT%H:%M:%S')}\"", "-am \"#{comment}\""
+	git_command 'commit', "--date=\"#{date.strftime('%Y-%m-%dT%H:%M:%S')}\"", *comments
 end
