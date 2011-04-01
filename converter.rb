@@ -1,7 +1,4 @@
-require 'rubygems'
-require 'bundler'
 require 'nokogiri'
-require 'optparse'
 require 'fileutils'
 require 'time'
 require 'log4r'
@@ -10,42 +7,8 @@ require 'pp'
 DEFAULT_VAULT_CLIENT_PATH = "C:\\Program Files\\SourceGear\\Vault Client\\vault.exe"
 GITIGNORE = <<-EOF
 _sgbak/
+*.tmp
 EOF
-
-$options = {}
-OptionParser.new do |opts|
-  opts.banner = "Usage: vault2git.rb [$options] $/source/folder dest/folder"
-  
-  $options[:username] = ''
-  opts.on('-u', '--username [username]', 'The repository user') {|val| $options[:username] = val}
-  
-  $options[:password] = ''
-  opts.on('-p', '--password [password]', 'The repository user\'s password') {|val| $options[:password] = val}
-  
-  $options[:host] = ''
-  opts.on('-s', '--host host', 'The repository hostname/ip address') {|val| $options[:host] = val}
-  
-  $options[:repository] = ''
-  opts.on('-r', '--repo name', 'The repository name') {|val| $options[:repository] = val}
-  
-  $options[:vault_client] = DEFAULT_VAULT_CLIENT_PATH
-  opts.on('', '--vault-client-path path-to-vault.exe', "Path to vault.exe, defaults to #{DEFAULT_VAULT_CLIENT_PATH}") {|val| $options[:vault_client] = val}
-  
-  $options[:logfile] = 'vault2git.log'
-  opts.on('', '--logfile filename', 'File to log to') {|val| $options[:logfile] = val}
-  
-  opts.on('-h', '--help', 'Display this help screen') do
-	puts opts
-	exit
-  end
-  
-  opts.parse!
-  if opts.default_argv.size != 2
-    puts opts
-	exit
-  end
-  $options[:source], $options[:dest] = opts.default_argv
-end
 
 class Converter
 	# Configure logging
@@ -143,12 +106,8 @@ class Converter
 		File.open(".gitignore", 'w') {|f| f.write(GITIGNORE)}
 		git_commit 'Starting Vault repository import'
 		
-		info "Set Vault working folders"
+		info "Set Vault working folder"
 		vault_command 'setworkingfolder', $options[:source], $options[:dest], false
-		#folders = (vault_command('listworkingfolders', [], [], false).xpath('//workingfolder'))
-		#folders.map{|f| f.attributes['reposfolder'].value}.select{|f| f.start_with?($options[:source] + '/')}.each do |f|
-		#	vault_command 'setworkingfolder', quote_value(f), ($options[:dest] + f.sub($options[:source], '')).gsub('/', '\\'), false
-		#end
 
 		info "Fetch version history"
 		versions = vault_command('versionhistory') % :history
@@ -176,4 +135,3 @@ class Converter
 	end
 end
 
-Converter.convert
