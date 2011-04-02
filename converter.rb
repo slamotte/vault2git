@@ -4,7 +4,6 @@ require 'time'
 require 'log4r'
 require 'pp'
 
-DEFAULT_VAULT_CLIENT_PATH = "C:\\Program Files\\SourceGear\\Vault Client\\vault.exe"
 GITIGNORE = <<-EOF
 _sgbak/
 *.tmp
@@ -16,7 +15,7 @@ class Converter
 	$logger = Logger.new('vault2git')
 	stdout_log = StdoutOutputter.new('console')
 	stdout_log.level = INFO
-	file_log = FileOutputter.new('file', :filename => $options[:logfile], :trunc => true)
+	file_log = FileOutputter.new('file', :filename => $options.logfile, :trunc => true)
 	file_log.level = DEBUG
 	$logger.add(stdout_log, file_log)
 	%w(debug info warn error fatal).map(&:to_sym).each do |level|
@@ -30,7 +29,7 @@ class Converter
 	debug $options.inspect
 
 	def self.quote_param(param)
-	  value = $options[param.to_sym]
+	  value = $options.send(param)
 	  quote_value value
 	end
 
@@ -96,18 +95,23 @@ class Converter
 		raise
 	  end
 	end
+	
+	def self.clear_working_folder
+		Dir[$options.dest + "/*"].each{|d| FileUtils.rm_rf d}
+	end
 
 	def self.convert
 		info "Starting at #{Time.now}"
+		debug "Parameters: " + $options.inspect
 		info "Prepare destination folder"
-		FileUtils.rm_rf $options[:dest]
-		git_command 'init', $options[:dest]
-		Dir.chdir $options[:dest]
+		FileUtils.rm_rf $options.dest
+		git_command 'init', $options.dest
+		Dir.chdir $options.dest
 		File.open(".gitignore", 'w') {|f| f.write(GITIGNORE)}
 		git_commit 'Starting Vault repository import'
 		
 		info "Set Vault working folder"
-		vault_command 'setworkingfolder', $options[:source], $options[:dest], false
+		vault_command 'setworkingfolder', $options.source, $options.dest, false
 
 		info "Fetch version history"
 		versions = vault_command('versionhistory') % :history
@@ -123,11 +127,12 @@ class Converter
 		versions.sort_by {|v| v[:version].to_i}.each_with_index do |version, i|
 			count += 1
 			info "Processing version #{count} of #{versions.size}"
-			vault_command 'getversion', version[:version]#, $options[:dest]
+			vault_command 'getversion', ["-backup no", "-merge overwrite", "-setfiletime checkin", "-performdeletions removeworkingcopy", version[:version]]#, $options.dest
 			comments = [version[:comment], "Original Vault commit: version #{version[:version]} on #{version[:date]} by #{version[:user]} (txid=#{version[:txid]})"].compact
 			date = Time.parse(version[:date])
 			git_commit comments, "--date=\"#{date.strftime('%Y-%m-%dT%H:%M:%S')}\""
 			git_command 'gc' if count % 20 == 0 || count == versions.size
+			clear_working_folder
 			GC.start if count % 20 == 0 # Force Ruby GC (might speed things up?)
 		end
 		
