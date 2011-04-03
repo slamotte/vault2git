@@ -77,7 +77,7 @@ class Converter
 
 	def self.git_commit(comments, *options)
 	  git_command 'add', '.'
-	  params = [*comments].map{|c| "-m \"#{c}\""} << options
+	  params = [*comments].map{|c| "-m \"#{c}\""} << options << "-a"
 	  git_command 'commit', *(params.flatten)
 	end
 
@@ -128,7 +128,7 @@ class Converter
 			count += 1
 			info "Processing version #{count} of #{versions.size}"
 			vault_command 'getversion', ["-backup no", "-merge overwrite", "-setfiletime checkin", "-performdeletions removeworkingcopy", version[:version]]#, $options.dest
-			comments = [version[:comment], "Original Vault commit: version #{version[:version]} on #{version[:date]} by #{version[:user]} (txid=#{version[:txid]})"].compact
+			comments = [version[:comment], "Original Vault commit: version #{version[:version]} on #{version[:date]} by #{version[:user]} (txid=#{version[:txid]})"].compact.map{|c|c.gsub('"', '\"')}
 			date = Time.parse(version[:date])
 			git_commit comments, "--date=\"#{date.strftime('%Y-%m-%dT%H:%M:%S')}\""
 			git_command 'gc' if count % 20 == 0 || count == versions.size
