@@ -1,6 +1,6 @@
 h1. vault2git
 
-Creates a Git repository given a SourceGear Vault repository.
+Creates a Git repository from a SourceGear Vault repository.
 
 h2. Why?
 
@@ -21,4 +21,4 @@ Clearly this isn't an optimal algorithm, but it works. And really, how often are
 h2. Known Issues
 
 * It can be slow for large repositories
-* The @.gitignore@ created by default should be turned into a template that can be read in.
+* The @.gitignore@ created by default (specifically for my project) should be turned into a customizable template.
