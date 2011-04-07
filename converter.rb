@@ -5,8 +5,14 @@ require 'log4r'
 require 'pp'
 
 GITIGNORE = <<-EOF
-_sgbak/
+[Oo]bj/
+[Bb]in/
+*.suo
+*.user
+*.vspscc
+*.vssscc
 *.tmp
+*.log
 EOF
 
 class Converter
@@ -97,7 +103,9 @@ class Converter
 	end
 	
 	def self.clear_working_folder
-		Dir[$options.dest + "/*"].each{|d| FileUtils.rm_rf d}
+		files_to_delete = Dir[$options.dest + "/*"]
+		debug "Removing folders: #{files_to_delete.join(', ')}"
+		files_to_delete .each{|d| FileUtils.rm_rf d}
 	end
 
 	def self.convert
@@ -127,12 +135,11 @@ class Converter
 		versions.sort_by {|v| v[:version].to_i}.each_with_index do |version, i|
 			count += 1
 			info "Processing version #{count} of #{versions.size}"
-			vault_command 'getversion', ["-backup no", "-merge overwrite", "-setfiletime checkin", "-performdeletions removeworkingcopy", version[:version]]#, $options.dest
-			comments = [version[:comment], "Original Vault commit: version #{version[:version]} on #{version[:date]} by #{version[:user]} (txid=#{version[:txid]})"].compact.map{|c|c.gsub('"', '\"')}
-			date = Time.parse(version[:date])
-			git_commit comments, "--date=\"#{date.strftime('%Y-%m-%dT%H:%M:%S')}\""
-			git_command 'gc' if count % 20 == 0 || count == versions.size
 			clear_working_folder
+			vault_command 'getversion', ["-backup no", "-merge overwrite", "-setfiletime checkin", "-performdeletions removeworkingcopy", version[:version]]
+			comments = [version[:comment], "Original Vault commit: version #{version[:version]} on #{version[:date]} by #{version[:user]} (txid=#{version[:txid]})"].compact.map{|c|c.gsub('"', '\"')}
+			git_commit comments, "--date=\"#{Time.parse(version[:date]).strftime('%Y-%m-%dT%H:%M:%S')}\""
+			git_command 'gc' if count % 20 == 0 || count == versions.size
 			GC.start if count % 20 == 0 # Force Ruby GC (might speed things up?)
 		end
 		
