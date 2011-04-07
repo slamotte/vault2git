@@ -1,24 +1,40 @@
-h1. vault2git
+h0. vault2git
 
 Creates a Git repository from a SourceGear Vault repository.
 
 h2. Why?
 
-I tend to prefer Git's workflow and merging model over Vault, and wanted to convert some of my Vault repos to Git rather than abandoning all of my versioning history. It looks like a lot of others feel the same way, but there doesn't seem to be many solutions. I found one .NET program that will do it, but I don't have VS2010 installed, plus I am a big Ruby fan so I decided to create my own converter one weekend and share it.
+I tend to prefer Git's workflow and merging model over Vault, and wanted to convert some of my Vault repos to Git rather than abandoning all of my versioning history. It looks like a lot of others feel the same way, but there don't seem to be many solutions. I found one .NET program that will do it, but I don't have VS2010 installed, plus I am a big Ruby fan so I decided to create my own converter one weekend and share it.
 
 h2. Process
 
 The conversion process is pretty BFI-y. Given a Vault repository, it creates a new Git repository, fetches the list of Vault versions, then iterates through each of the versions performing the following steps:
 
-* clear the Git repository folder (except @.git*@ files)
+* clear out the Git repository folder (except @.git*@ files)
 * fetch the current version's files from Vault
-* add and commit the version to Git
+* add and commit the version to Git, including a descriptive comment
 
 The comments written to Git include the original Vault comments (if any) plus a one-liner containing the original Vault version number, checki-n time, etc. The original Vault check-in time is used as the commit's time.
 
 Clearly this isn't an optimal algorithm, but it works. And really, how often are you going to do this? I have one project that has hundreds of source files AND some large binary library files with over 500 versions, and it runs in something like eight hours. But it works so I'm happy.
 
+h2. Invoking
+
+Launch the app with @ruby vault2git@ and you'll see the help screen which should be enough to get you started. An example might be:
+
+<code>
+ruby vault2git --host localhost --repo "My Repo" $/Vault/Folder c:\New\Git\Repo
+</code>
+
+Wrap parameter values in double-quotes as required.
+
+h2. Requirements
+
+* Vault client installed (uses the command-line client)
+* Ruby 1.8.7 (should also work with 1.9.X)
+* Bundler gem: installed dependencies with @bundle install@
+
 h2. Known Issues
 
-* It can be slow for large repositories
+* Can be slow for large repositories
 * The @.gitignore@ created by default (specifically for my project) should be turned into a customizable template.
