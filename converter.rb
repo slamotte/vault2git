@@ -69,7 +69,8 @@ class Converter
 	end
 
 	def self.git_command(command, *options)
-		parts = %w(git)
+		parts = []
+		parts << quote_param(:git)
 		parts << command
 		[*options].each{|param| parts << param}
 		cmd = parts.join(' ')
