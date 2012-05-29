@@ -112,6 +112,7 @@ class Converter
 	def self.convert
 		info "Starting at #{Time.now}"
 		debug "Parameters: " + $options.inspect
+		authors = get_authors()
 		info "Prepare destination folder"
 		FileUtils.rm_rf $options.dest
 		git_command 'init', $options.dest
@@ -139,12 +140,27 @@ class Converter
 			clear_working_folder
 			vault_command 'getversion', ["-backup no", "-merge overwrite", "-setfiletime checkin", "-performdeletions removeworkingcopy", version[:version]]
 			comments = [version[:comment], "Original Vault commit: version #{version[:version]} on #{version[:date]} by #{version[:user]} (txid=#{version[:txid]})"].compact.map{|c|c.gsub('"', '\"')}
-			git_commit comments, "--date=\"#{Time.parse(version[:date]).strftime('%Y-%m-%dT%H:%M:%S')}\""
+			git_commit comments, "--date=\"#{Time.parse(version[:date]).strftime('%Y-%m-%dT%H:%M:%S')}\"", (if authors.has_key? version[:user] then "--author=\"#{authors[version[:user]]}\"" else "" end)
 			git_command 'gc' if count % 20 == 0 || count == versions.size
 			GC.start if count % 20 == 0 # Force Ruby GC (might speed things up?)
 		end
 		
 		info "Ended at #{Time.now}"
+	end
+
+	def self.get_authors
+		AUTHORS_FILE = "authors.xml"
+		authors = Hash.new()
+
+		if File.exists? AUTHORS_FILE then
+			info "Reading authors file"
+			doc = Nokogiri::XML(File.open(AUTHORS_FILE))
+			doc.children.each do |item|
+				authors[item[:vaultname]] = "#{item[:name]} <#{item[:email]}>"
+			end
+		end
+
+		authors
 	end
 end
 
