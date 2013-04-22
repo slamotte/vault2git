@@ -1,4 +1,4 @@
-h0. vault2git
+h1. vault2git
 
 Creates a Git repository from a SourceGear Vault repository.
 
