@@ -2,18 +2,21 @@ h1. Quick Start Guide
 
 These instructions were made on Windows but they should be similar on other platforms.
 
-h2. Start by installing Ruby 1.8.7
-    Windows: Make sure you allow the binaries to be added to your PATH
-	
-h2. Open a new command prompt and install a few necessary gems:
-    gem install bundler
-    gem install nokogiri -v 1.5.11
-    gem install log4r
+h3. Start by installing Ruby 1.8.7
 
-h2. Locate your installation of SourceGear Vault Client.
+Windows: Make sure you allow the binaries to be added to your PATH
+	
+h3. Open a new command prompt and install a few necessary gems:
+
+gem install bundler
+gem install nokogiri -v 1.5.11
+gem install log4r
+
+h3. Locate your installation of SourceGear Vault Client.
+
 You can edit the options.rb file to set this value if it differs from the default. It's not necessary but saves you from having to include on the command line every time.
 
-h2. Create your folder structure for where you want your new git repository to be created.
+h3. Create your folder structure for where you want your new git repository to be created.
 
 Invoke the vault2git script like so:
 
