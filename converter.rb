@@ -148,8 +148,8 @@ class Converter
 		info "Ended at #{Time.now}"
 	end
 
+	AUTHORS_FILE = "authors.xml"
 	def self.get_authors
-		AUTHORS_FILE = "authors.xml"
 		authors = Hash.new()
 
 		if File.exists? AUTHORS_FILE then
