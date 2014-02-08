@@ -121,7 +121,7 @@ class Converter
 		git_commit 'Starting Vault repository import'
 		
 		info "Set Vault working folder"
-		vault_command 'setworkingfolder', $options.source, $options.dest, false
+		vault_command 'setworkingfolder', '"' + $options.source + '"', '"' + $options.dest + '"', false
 
 		info "Fetch version history"
 		versions = vault_command('versionhistory') % :history
@@ -148,8 +148,8 @@ class Converter
 		info "Ended at #{Time.now}"
 	end
 
+	AUTHORS_FILE = "authors.xml"
 	def self.get_authors
-		AUTHORS_FILE = "authors.xml"
 		authors = Hash.new()
 
 		if File.exists? AUTHORS_FILE then
