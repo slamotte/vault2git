@@ -121,7 +121,7 @@ class Converter
 		git_commit 'Starting Vault repository import'
 		
 		info "Set Vault working folder"
-		vault_command 'setworkingfolder', '"' + $options.source + '"', '"' + $options.dest + '"', false
+		vault_command 'setworkingfolder', quote_value($options.source), quote_value($options.dest), false
 
 		info "Fetch version history"
 		versions = vault_command('versionhistory') % :history
@@ -138,7 +138,7 @@ class Converter
 			count += 1
 			info "Processing version #{count} of #{versions.size}"
 			clear_working_folder
-			vault_command 'getversion', ["-backup no", "-merge overwrite", "-setfiletime checkin", "-performdeletions removeworkingcopy", version[:version]]
+			vault_command 'getversion', ["-backup no", "-merge overwrite", "-setfiletime checkin", "-performdeletions removeworkingcopy", version[:version]], quote_value($options.dest)
 			comments = [version[:comment], "Original Vault commit: version #{version[:version]} on #{version[:date]} by #{version[:user]} (txid=#{version[:txid]})"].compact.map{|c|c.gsub('"', '\"')}
 			git_commit comments, "--date=\"#{Time.parse(version[:date]).strftime('%Y-%m-%dT%H:%M:%S')}\"", (if authors.has_key? version[:user] then "--author=\"#{authors[version[:user]]}\"" else "" end)
 			git_command 'gc' if count % 20 == 0 || count == versions.size
