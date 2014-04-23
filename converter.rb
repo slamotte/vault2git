@@ -83,7 +83,7 @@ class Converter
 	end
 
 	def self.git_commit(comments, *options)
-	  git_command 'add', '.'
+	  git_command 'add', '--all', '.'
 	  params = [*comments].map{|c| "-m \"#{c}\""} << options << "-a"
 	  git_command 'commit', *(params.flatten)
 	end
@@ -115,13 +115,13 @@ class Converter
 		authors = get_authors()
 		info "Prepare destination folder"
 		FileUtils.rm_rf $options.dest
-		git_command 'init', $options.dest
+		git_command 'init', quote_value($options.dest)
 		Dir.chdir $options.dest
 		File.open(".gitignore", 'w') {|f| f.write(GITIGNORE)}
 		git_commit 'Starting Vault repository import'
 		
 		info "Set Vault working folder"
-		vault_command 'setworkingfolder', quote_value($options.source), quote_value($options.dest), false
+		vault_command 'setworkingfolder', quote_value($options.source), $options.dest, false
 
 		info "Fetch version history"
 		versions = vault_command('versionhistory') % :history
@@ -138,7 +138,7 @@ class Converter
 			count += 1
 			info "Processing version #{count} of #{versions.size}"
 			clear_working_folder
-			vault_command 'getversion', ["-backup no", "-merge overwrite", "-setfiletime checkin", "-performdeletions removeworkingcopy", version[:version]], quote_value($options.dest)
+			vault_command 'getversion', ["-backup no", "-merge overwrite", "-setfiletime checkin", "-performdeletions removeworkingcopy", version[:version]], $options.dest
 			comments = [version[:comment], "Original Vault commit: version #{version[:version]} on #{version[:date]} by #{version[:user]} (txid=#{version[:txid]})"].compact.map{|c|c.gsub('"', '\"')}
 			git_commit comments, "--date=\"#{Time.parse(version[:date]).strftime('%Y-%m-%dT%H:%M:%S')}\"", (if authors.has_key? version[:user] then "--author=\"#{authors[version[:user]]}\"" else "" end)
 			git_command 'gc' if count % 20 == 0 || count == versions.size
