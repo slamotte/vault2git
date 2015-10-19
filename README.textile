@@ -14,7 +14,7 @@ The conversion process is pretty BFI-y. Given a Vault repository, it creates a n
 * fetch the current version's files from Vault
 * add and commit the version to Git, including a descriptive comment
 
-The comments written to Git include the original Vault comments (if any) plus a one-liner containing the original Vault version number, checki-n time, etc. The original Vault check-in time is used as the commit's time.
+The comments written to Git include the original Vault comments (if any) plus a one-liner containing the original Vault version number, check-in time, etc. The original Vault check-in time is used as the commit's time.
 
 Clearly this isn't an optimal algorithm, but it works. And really, how often are you going to do this? I have one project that has hundreds of source files AND some large binary library files with over 500 versions, and it runs in something like eight hours. But it works so I'm happy.
 
