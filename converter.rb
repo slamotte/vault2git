@@ -124,7 +124,7 @@ class Converter
 		vault_command 'setworkingfolder', quote_value($options.source), $options.dest, false
 
 		info "Fetch version history"
-		versions = vault_command('versionhistory') % :history
+		versions = vault_command('versionhistory', ["-rowlimit 0"]) % :history
 		versions = versions.children.map do |item|
 		  hash = {}
 		  item.attributes.each do |attr|
