@@ -1,10 +1,20 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    nokogiri (1.4.4-x86-mingw32)
+    log4r (1.1.10)
+    mini_portile2 (2.4.0)
+    nokogiri (1.10.4)
+      mini_portile2 (~> 2.4.0)
+    nokogiri (1.10.4-x86-mingw32)
+      mini_portile2 (~> 2.4.0)
 
 PLATFORMS
+  ruby
   x86-mingw32
 
 DEPENDENCIES
-  nokogiri (= 1.4.4)
+  log4r
+  nokogiri (~> 1.10.4)
+
+BUNDLED WITH
+   2.0.2
