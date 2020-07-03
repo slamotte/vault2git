@@ -6,7 +6,7 @@ module Options
   $options = OpenStruct.new
 
   # Set defaults
-  $options.usename = ""
+  $options.username = ""
   $options.password = ""
   $options.vault_client = "C:\\Program Files\\SourceGear\\Vault Client\\vault.exe"
   $options.git = "git"
