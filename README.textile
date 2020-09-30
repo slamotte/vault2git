@@ -38,3 +38,4 @@ h2. Known Issues
 
 * Can be slow for large repositories
 * The @.gitignore@ created by default (specifically for my project) should be turned into a customizable template.
+* I no longer have access to a Windows machine or Vault so it's difficult for me to update this project.
