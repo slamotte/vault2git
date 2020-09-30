@@ -23,7 +23,7 @@ h2. Invoking
 Launch the app with @ruby vault2git@ and you'll see the help screen which should be enough to get you started. An example might be:
 
 <code>
-ruby vault2git --host localhost --repo "My Repo" $/Vault/Folder c:/New/Git/Repo
+bundle exec ruby vault2git --host localhost --repo "My Repo" $/Vault/Folder c:/New/Git/Repo
 </code>
 
 Wrap parameter values in double-quotes as required. _IMPORTANT: the paths MUST use forward slashes to delimit folders even in Windows._
@@ -31,7 +31,7 @@ Wrap parameter values in double-quotes as required. _IMPORTANT: the paths MUST u
 h2. Requirements
 
 * Vault client installed (uses the command-line client)
-* Ruby 1.8.7 (should also work with 1.9.X)
+* Ruby 2.5.8
 * Bundler gem: installed dependencies with @bundle install@
 
 h2. Known Issues

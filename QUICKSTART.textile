@@ -22,10 +22,10 @@ h4. Create the folder structure for where you want your new git repository to be
 Invoke the vault2git script like so:
 
 <code>
-ruby vault2git.rb --host VAULT_SERVER --repo VAULT_REPOSITORY_NANE -u VAULT_USER -p VAULT_PASSWORD VAULT_SOURCE GIT_DESTINATION
+bundle exec ruby vault2git.rb --host VAULT_SERVER --repo VAULT_REPOSITORY_NANE -u VAULT_USER -p VAULT_PASSWORD VAULT_SOURCE GIT_DESTINATION
 </code>
 <code>
-ruby vault2git.rb --host localhost --repo "Initial Repository" -u user -p password $/Apps/Alpha C:/source/git/Alpha
+bundle exec ruby vault2git.rb --host localhost --repo "Initial Repository" -u user -p password $/Apps/Alpha C:/source/git/Alpha
 </code>
 
 Make sure to put quotes around any parameters containing a space.
