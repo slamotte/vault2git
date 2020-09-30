@@ -2,21 +2,22 @@ h1. Quick Start Guide
 
 These instructions were made on Windows but they should be similar on other platforms.
 
-h4. Start by installing Ruby 1.8.7
+h4. Start by installing Ruby (see .ruby-version)
+
+Use rvm, asdf, whatever you prefer.
 
 Windows: Make sure you allow the binaries to be added to your PATH
-	
-h4. Open a new command prompt and install a few necessary gems:
+
+h4. Open a new command prompt to your vault2git folder and run:
 
 gem install bundler
-gem install nokogiri -v 1.5.11
-gem install log4r
+bundle install
 
 h4. Locate your installation of SourceGear Vault Client.
 
 You can edit the options.rb file to set this value if it differs from the default. It's not necessary but saves you from having to include on the command line every time.
 
-h4. Create your folder structure for where you want your new git repository to be created.
+h4. Create the folder structure for where you want your new git repository to be created.
 
 Invoke the vault2git script like so:
 
@@ -24,7 +25,7 @@ Invoke the vault2git script like so:
 ruby vault2git.rb --host VAULT_SERVER --repo VAULT_REPOSITORY_NANE -u VAULT_USER -p VAULT_PASSWORD VAULT_SOURCE GIT_DESTINATION
 </code>
 <code>
-ruby vault2git.rb --host localhost --repo "Initial Repository" -u user -p password $/Apps/Alpha C:\source\git\Alpha
+ruby vault2git.rb --host localhost --repo "Initial Repository" -u user -p password $/Apps/Alpha C:/source/git/Alpha
 </code>
 
 Make sure to put quotes around any parameters containing a space.
