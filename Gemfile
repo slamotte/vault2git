@@ -1,5 +1,5 @@
 source :rubygems
 
-gem 'nokogiri', '~> 1.12.5'
+gem 'nokogiri', '~> 1.13.4'
 gem 'log4r'
 
